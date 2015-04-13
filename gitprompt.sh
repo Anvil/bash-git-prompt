@@ -23,7 +23,9 @@ function git_prompt_dir()
 }
 
 function echoc() {
-    echo -e "${1}$2${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
+	local output=$(echo -e "${1}$2${ResetColor}")
+	# Remove \] and \[
+	echo "${output//\\[][]/}"
 }
 
 function get_theme()
