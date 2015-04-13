@@ -142,14 +142,14 @@ function git_prompt_make_custom_theme() {
 function gp_set_file_var() {
   local envar="$1"
   local file="$2"
-  if eval "[[ -n \"\$$envar\" && -r \"\$$envar\" ]]" ; then # is envar set to a readable file?
+  if [[ -n "${!envar}" && -r "${!envar}" ]] ; then # is envar set to a readable file?
     local basefile
-    eval "basefile=\"\`basename \\\"\$$envar\\\"\`\""   # assign basefile
+    basefile=$(basename "${!envar}") # assign basefile
     if [[ "$basefile" = "$file" || "$basefile" = ".$file" ]]; then
       return 0
     fi
   else  # envar is not set, or it's set to a different file than requested
-    eval "$envar="      # set empty envar
+    local $envar=""      # set empty envar
     gp_maybe_set_envar_to_path "$envar" "$HOME/.$file" "$HOME/$file" "$HOME/lib/$file" && return 0
     git_prompt_dir
     gp_maybe_set_envar_to_path "$envar" "$__GIT_PROMPT_DIR/$file" "${0##*/}/$file"     && return 0
@@ -168,7 +168,7 @@ function gp_maybe_set_envar_to_path(){
   local file
   for file in "$@" ; do
     if [[ -r "$file" ]]; then
-      eval "$envar=\"$file\""
+      printf -v "$envar" %s "$file"
       return 0
     fi
   done
